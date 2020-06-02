@@ -1,0 +1,158 @@
+create database skila_teste;
+
+create table if not exists aluguel (
+    aluguel_id int(11) not null auto_increment,
+    data_de_aluguel datetime not null,
+    inventario_id mediumint(8) unsigned not null,
+    cliente_id smallint(5) unsigned  not null,
+    data_de_devolucao datetime  default null,
+    funcionario_id tinyint(3) unsigned not null,
+    utima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (aluguel_id),
+    unique key data_de_aluguel(data_de_aluguel, inventario_id, cliente_id),
+    key idx_fk_inventario_id(inventario_id),
+    key idx_fk_cliente_id(cliente_id),
+    key idx_fk_funcionario_id(funcionario_id)
+
+) engine=innoDB default charset=utf8 auto_increment=16050;
+
+create table if  not exists ator(
+    ator_id smallint(5) unsigned not null auto_increment,
+    primeiro_nome varchar(45) not null,
+    ultimo_nome varchar(45) not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (ator_id),
+    key idx_ator_ultimo_nome(ultimo_nome)
+) engine=InnoDB default charset=utf8 auto_increment=201;
+
+create table if not exists categoria (
+    categoria_id tinyint(3) unsigned not null auto_increment,
+    nome varchar(25) not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (categoria_id)
+)engine=innoBd default charset=utf8 auto_increment=17;
+
+create table if not exists cidade(
+    cidade_id smallint(5) unsigned not null auto_increment,
+    cidade varchar(50) not null,
+    pais_id smallint(5) unsigned not null,
+    ultima_atualizacao timestamp not null default current_timestamp on  update current_timestamp,
+    primary key (cidade_id),
+    key idx_fk_pais_id (pais_id)
+) engine=InnoDB default charset=utf8 auto_increment=601;
+
+create table if not exists cliente(
+    cliente_id smallint(5) unsigned not null auto_increment,
+    loja_id tinyint(3) unsigned not null,
+    primeiro_nome varchar(45) not null,
+    ultimo_nome varchar(45) not null,
+    email varchar(50) default null,
+    endereco_id smallint(5) unsigned not null,
+    ativo tinyint(1) not null default'1',
+    data_criacao datetime not null,
+    ultima_atualizacao timestamp not null  default current_timestamp on update current_timestamp,
+    primary key (cliente_id),
+    key idx_fk_loja_id(loja_id),
+    key idx_fk_endereco_id(endereco_id),
+    key idx_ultimo_nome (ultimo_nome)
+) engine=InnoDB default charset=utf8 auto_increment=600;
+
+create table if not exists endereco(
+    endereco_id smallint(5) unsigned not null auto_increment,
+    endereco varchar(50) not null,
+    endereco2 varchar(50) default null,
+    bairro varchar(20) not null,
+    cidade_id smallint(5) unsigned not null,
+    cep varchar(10) default null,
+    telefone varchar(20) not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (endereco_id),
+    key idx_fk_cidade_id(cidade_id)
+) engine=InnoDB default charset=utf8 auto_increment=606;
+
+
+create table if not exists filme(
+    filme_id smallint(5) unsigned not null auto_increment,
+    titulo varchar(255) not null,
+    descricao text,
+    ano_de_lancamento year(4) default null,
+    idioma_id tinyint(3) unsigned not null,
+    idioma_original_id tinyint(3) unsigned default null,
+    duracao_da_locacao tinyint(3) unsigned not null default'3',
+    preco_da_locacao decimal(4,2) not null default'4.99',
+    duracao_do_filme smallint(5) unsigned default null,
+    custo_de_substituicao decimal (5,2) not null default '19.99',
+    classificacao enum('G','PG','PG-13','R','NC-17') default'G',
+    recursos_especiais set('trailers','commentaries','deleted scenes','behind the scenes') default null,
+    ultima_atualizacao timestamp not null default current_timestamp on  update current_timestamp,
+    primary key (filme_id),
+    key idx_titulo(titulo),
+    key idx_fk_idioma_id (idioma_id),
+    key idx_fk_idioma_original_id(idioma_original_id)
+) engine=InnoDB default charset=utf8 auto_increment=1001;
+
+
+create table if not exists filme_ator(
+    ator_id smallint(5) unsigned not null,
+    filme_id smallint(5) unsigned not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (ator_id,filme_id),
+    key idx_fk_filme_id(filme_id)
+) engine=InnoDb default charset=utf8;
+
+create table if not exists filme_categoria(
+    filme_id smallint(5) unsigned not null,
+    categoria_id tinyint(3) unsigned not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (filme_id, categoria_id),
+    key fk_filme_categoria_categoria(categoria_id)
+) engine=InnoDB default charset=utf8;
+
+create table if not exists filme_texto(
+    filme_id smallint(6) not null,
+    titulo varchar(255) not null,
+    descricao text,
+    primary key (filme_id),
+    fulltext key idx_titulo_descricao(titulo, descricao)
+) engine=myisam default charset=utf8;
+
+create table if not exists funcionario (
+    funcionario_id tinyint(3) unsigned not null auto_increment,
+    primeiro_nome varchar(45) not null,
+    ultimo_nome varchar(45) not null,
+    endereco_id smallint(5) unsigned not null,
+    foto blob,
+    email varchar(50) default null,
+    loja_id tinyint(3) unsigned not null,
+    ativo tinyint(1) not null default'1',
+    usuario varchar(16) not null,
+    senha varchar(40) character set utf8 collate utf8_bin default null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (funcionario_id),
+    key idx_fk_loja_id (loja_id),
+    key idx_fk_endereco_id (endereco_id)
+
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3;
+
+create table if not exists idioma(
+    idioma_id tinyint(3) unsigned not null auto_increment,
+    nome char(20) not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (idioma_id)
+) engine=InnoDB default charset=utf8 auto_increment = 7;
+
+create table if not exists inventario(
+    inventario_id mediumint(8) unsigned not null auto_increment,
+    filme_id smallint(5) unsigned  not null,
+    loja_id tinyint(3) unsigned  not null,
+    ultima_atualizacao timestamp not null default current_timestamp on update current_timestamp,
+    primary key (inventario_id),
+    key idx_fk_filme_id (filme_id),
+    key idx_loja_id_filme_id(loja_id, filme_id)
+)engine=InnoDB default charset=utf8 auto_increment=4582;
+
+
+
+)
+
+
